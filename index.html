@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>出差工具包</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222536;
+    --border: #2e3145;
+    --accent: #4f8ef7;
+    --accent2: #7c5cbf;
+    --green: #3dba7f;
+    --yellow: #e8b94a;
+    --red: #e05c5c;
+    --text: #e8eaf0;
+    --muted: #8890a8;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+         background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav { background: var(--surface); border-bottom: 1px solid var(--border);
+        padding: 0 24px; display: flex; align-items: center; gap: 8px;
+        position: sticky; top: 0; z-index: 100; height: 52px; }
+  nav .brand { font-weight: 700; font-size: 1rem; color: var(--accent);
+               margin-right: 16px; white-space: nowrap; }
+  nav a { color: var(--muted); text-decoration: none; font-size: .875rem;
+          padding: 6px 12px; border-radius: 6px; transition: .15s; white-space: nowrap; }
+  nav a:hover, nav a.active { background: var(--surface2); color: var(--text); }
+
+  /* LAYOUT */
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+  h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 32px; }
+
+  /* SECTION TABS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border);
+          border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px; }
+  .card-title { font-weight: 600; font-size: 1rem; margin-bottom: 12px;
+                display: flex; align-items: center; gap: 8px; }
+  .card-title .icon { font-size: 1.1rem; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+  th { text-align: left; color: var(--muted); font-weight: 500;
+       padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px;
+           font-size: .75rem; font-weight: 600; }
+  .badge-blue   { background: rgba(79,142,247,.15); color: var(--accent); }
+  .badge-green  { background: rgba(61,186,127,.15); color: var(--green); }
+  .badge-yellow { background: rgba(232,185,74,.15);  color: var(--yellow); }
+  .badge-red    { background: rgba(224,92,92,.15);   color: var(--red); }
+  .badge-purple { background: rgba(124,92,191,.15);  color: #9e7ee8; }
+
+  /* TRIP CARD */
+  .trip-header { display: flex; align-items: flex-start; justify-content: space-between;
+                 gap: 16px; flex-wrap: wrap; }
+  .trip-dates { color: var(--muted); font-size: .85rem; margin-top: 4px; }
+  .flight-row { display: flex; align-items: center; gap: 12px; padding: 10px 0;
+                border-bottom: 1px solid var(--border); font-size: .875rem; }
+  .flight-row:last-child { border-bottom: none; }
+  .flight-code { font-weight: 700; color: var(--accent); width: 72px; flex-shrink: 0; }
+  .flight-airports { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .airport { font-weight: 600; }
+  .arrow { color: var(--muted); }
+  .flight-time { color: var(--muted); font-size: .82rem; text-align: right; white-space: nowrap; }
+
+  /* INFO GRID */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .info-item label { display: block; color: var(--muted); font-size: .75rem;
+                     text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  .info-item span { font-size: .9rem; font-weight: 500; }
+
+  /* COST TABLE */
+  .cost-total td { font-weight: 700; border-top: 2px solid var(--border); }
+
+  /* ALERT */
+  .alert { background: rgba(232,185,74,.08); border: 1px solid rgba(232,185,74,.3);
+           border-radius: var(--radius); padding: 12px 16px; font-size: .85rem;
+           color: var(--yellow); margin-bottom: 16px; }
+  .alert strong { display: block; margin-bottom: 4px; }
+
+  /* VISA TABLE */
+  .flag { font-size: 1.2rem; }
+
+  /* QUICK REF */
+  .ref-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .ref-card { background: var(--surface2); border: 1px solid var(--border);
+              border-radius: 8px; padding: 14px 16px; }
+  .ref-card h4 { font-size: .85rem; color: var(--muted); margin-bottom: 8px; }
+  .ref-card p  { font-size: .9rem; line-height: 1.6; }
+  .ref-card a  { color: var(--accent); text-decoration: none; }
+  .ref-card a:hover { text-decoration: underline; }
+
+  /* EMPTY STATE */
+  .empty { color: var(--muted); font-size: .9rem; padding: 24px 0; text-align: center; }
+
+  @media (max-width: 600px) {
+    nav { gap: 4px; }
+    nav a { padding: 6px 8px; font-size: .8rem; }
+    .container { padding: 20px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">✈ 出差包</span>
+  <a href="#" class="active" onclick="show('trips', this)">行程</a>
+  <a href="#" onclick="show('visa', this)">簽證</a>
+  <a href="#" onclick="show('flights', this)">航班資訊</a>
+  <a href="#" onclick="show('hotels', this)">住宿</a>
+  <a href="#" onclick="show('quickref', this)">快查</a>
+</nav>
+
+<div class="container">
+
+<!-- ========== 行程 ========== -->
+<section id="trips" class="section active">
+  <h1>出差行程</h1>
+  <p class="subtitle">歷次出差的完整行程紀錄</p>
+
+  <!-- 第二次出差 -->
+  <div class="card">
+    <div class="trip-header">
+      <div>
+        <div class="card-title">
+          <span class="icon">🌏</span>
+          第二次出差 — 台北 → 可倫坡 → 馬累
+          <span class="badge badge-blue">進行中</span>
+        </div>
+        <div class="trip-dates">2026/06/11（四）– 06/16（二）｜旅客：KAN / SHUN-CHI</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div class="card-title" style="font-size:.85rem; color:var(--muted); margin-bottom:8px;">✈ 航班</div>
+      <div class="flight-row">
+        <div class="flight-code">CI 753</div>
+        <div class="flight-airports">
+          <span class="airport">TPE T1</span>
+          <span class="arrow">→</span>
+          <span class="airport">SIN T3</span>
+        </div>
+        <div class="flight-time">06/11 08:05 → 12:35<br><span style="color:var(--muted)">A350 / 經濟 / D32VHD</span></div>
+      </div>
+      <div class="flight-row">
+        <div class="flight-code">SQ 468</div>
+        <div class="flight-airports">
+          <span class="airport">SIN T2</span>
+          <span class="arrow">→</span>
+          <span class="airport">CMB</span>
+        </div>
+        <div class="flight-time">06/11 22:20 → 23:35<br><span style="color:var(--muted)">B787 / 經濟 / D2MQCL</span></div>
+      </div>
+      <div class="flight-row">
+        <div class="flight-code">GF 145</div>
+        <div class="flight-airports">
+          <span class="airport">CMB</span>
+          <span class="arrow">→</span>
+          <span class="airport">MLE</span>
+        </div>
+        <div class="flight-time">06/13 17:20 → 18:25<br><span style="color:var(--muted)">經濟 / ORD0030283523</span></div>
+      </div>
+      <div class="flight-row">
+        <div class="flight-code">SQ 437</div>
+        <div class="flight-airports">
+          <span class="airport">MLE T1</span>
+          <span class="arrow">→</span>
+          <span class="airport">SIN</span>
+        </div>
+        <div class="flight-time">06/15 23:10 → 06/16 07:10<br><span style="color:var(--muted)">A350 / 經濟 / D2MQCL</span></div>
+      </div>
+      <div class="flight-row">
+        <div class="flight-code">CI 754</div>
+        <div class="flight-airports">
+          <span class="airport">SIN T3</span>
+          <span class="arrow">→</span>
+          <span class="airport">TPE T1</span>
+        </div>
+        <div class="flight-time">06/16 13:45 → 18:35<br><span style="color:var(--muted)">A350 / 豪華經濟 / D32VHD</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="card-title" style="font-size:.85rem; color:var(--muted); margin-bottom:8px;">🏨 住宿</div>
+      <table>
+        <thead><tr><th>地點</th><th>飯店</th><th>入住 → 退房</th><th>費用 (TWD)</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>可倫坡</td>
+            <td>Radisson Hotel Colombo<br><small style="color:var(--muted)">海景房 +94 70 469 4222</small></td>
+            <td>06/11 → 06/13 12:00<br><small style="color:var(--muted)">2 晚 含早餐</small></td>
+            <td>6,775<br><small style="color:var(--muted)">Agoda / Visa **5309</small></td>
+          </tr>
+          <tr>
+            <td>馬累</td>
+            <td>Summer Beach Maldives<br><small style="color:var(--muted)">Deluxe Ocean View +960 963 5550</small></td>
+            <td>06/13 → 06/15 12:00<br><small style="color:var(--muted)">2 晚 含早餐+免費機場接送</small></td>
+            <td>5,283<br><small style="color:var(--muted)">Agoda #1729110868 / Visa **5309</small></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="card-title" style="font-size:.85rem; color:var(--muted); margin-bottom:8px;">💰 費用小計</div>
+      <table class="cost-table">
+        <tbody>
+          <tr><td>CI 機票（D32VHD）</td><td style="text-align:right">16,005</td></tr>
+          <tr><td>SQ 機票（D2MQCL）</td><td style="text-align:right">29,429</td></tr>
+          <tr><td>GF 機票（ORD0030283523）</td><td style="text-align:right">5,627</td></tr>
+          <tr><td>Radisson Colombo</td><td style="text-align:right">6,775</td></tr>
+          <tr><td>Summer Beach Maldives</td><td style="text-align:right">5,283</td></tr>
+        </tbody>
+        <tfoot>
+          <tr class="cost-total"><td><strong>合計</strong></td><td style="text-align:right"><strong>63,119</strong></td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="alert">
+        <strong>⚠ 重要提醒</strong>
+        <ul style="padding-left:18px; line-height:2;">
+          <li>斯里蘭卡 ETA 與馬爾地夫 IMUGA 入境文件需事先備妥</li>
+          <li>06/11 抵可倫坡為深夜 23:35，務必提前電告 Radisson 飯店</li>
+          <li>06/11 新加坡轉機需由 T3 → T2，停留 9h45m</li>
+          <li>06/15 退房 12:00 到 SQ 437 23:10 之間有 ~11h 空檔，可詢行李寄放</li>
+          <li>06/15–16 為紅眼班（深夜出發），請預先休息</li>
+          <li>護照效期須至少至 2026/12/16</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- /第二次出差 -->
+
+</section>
+
+<!-- ========== 簽證 ========== -->
+<section id="visa" class="section">
+  <h1>簽證資訊</h1>
+  <p class="subtitle">各國入境所需文件與注意事項（依台灣護照）</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>國家</th>
+          <th>入境方式</th>
+          <th>辦理方式</th>
+          <th>費用</th>
+          <th>備注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="flag">🇸🇬</span> 新加坡</td>
+          <td><span class="badge badge-green">免簽</span></td>
+          <td>無需辦理</td>
+          <td>免費</td>
+          <td>轉機不出境不需任何文件</td>
+        </tr>
+        <tr>
+          <td><span class="flag">🇱🇰</span> 斯里蘭卡</td>
+          <td><span class="badge badge-blue">電子簽 ETA</span></td>
+          <td><a href="https://www.eta.gov.lk" target="_blank">eta.gov.lk</a></td>
+          <td>USD 35</td>
+          <td>入境前至少提前 2 天申請；停留最長 30 天</td>
+        </tr>
+        <tr>
+          <td><span class="flag">🇲🇻</span> 馬爾地夫</td>
+          <td><span class="badge badge-yellow">線上抵達卡</span></td>
+          <td><a href="https://imuga.immigration.gov.mv" target="_blank">IMUGA</a></td>
+          <td>免費</td>
+          <td>入境前 96 小時內填寫；落地免費給予 30 天觀光簽</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== 航班資訊 ========== -->
+<section id="flights" class="section">
+  <h1>常用航班資訊</h1>
+  <p class="subtitle">訂位代號、里程計劃、行李規定</p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> 訂位代號總覽</div>
+    <table>
+      <thead><tr><th>航空公司</th><th>訂位代號</th><th>電子票號</th><th>訂單來源</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>中華航空 (CI)</td>
+          <td><strong>D32VHD</strong></td>
+          <td>297-2425555261</td>
+          <td>直訂</td>
+        </tr>
+        <tr>
+          <td>新加坡航空 (SQ)</td>
+          <td><strong>D2MQCL</strong></td>
+          <td>6182477018557</td>
+          <td>易遊網 ORD0030282624</td>
+        </tr>
+        <tr>
+          <td>海灣航空 (GF)</td>
+          <td>—</td>
+          <td>—</td>
+          <td>易遊網 ORD0030283523</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🧳</span> 行李規定</div>
+    <table>
+      <thead><tr><th>航班</th><th>艙等</th><th>免費託運</th></tr></thead>
+      <tbody>
+        <tr><td>CI 753 (TPE→SIN)</td><td>經濟艙</td><td>請至 CI 官網確認</td></tr>
+        <tr><td>SQ 468 (SIN→CMB)</td><td>經濟艙 V</td><td>25 公斤</td></tr>
+        <tr><td>GF 145 (CMB→MLE)</td><td>經濟艙 E</td><td>請至 GF 官網確認</td></tr>
+        <tr><td>SQ 437 (MLE→SIN)</td><td>經濟艙 W</td><td>30 公斤</td></tr>
+        <tr><td>CI 754 (SIN→TPE)</td><td>豪華經濟艙</td><td>請至 CI 官網確認</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📞</span> 航空公司聯絡</div>
+    <div class="ref-grid">
+      <div class="ref-card">
+        <h4>新加坡航空 — 樟宜機場</h4>
+        <p>+65 6223 8888</p>
+      </div>
+      <div class="ref-card">
+        <h4>新加坡航空 — 馬累機場</h4>
+        <p>+960 320 777 / 325 160</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 住宿 ========== -->
+<section id="hotels" class="section">
+  <h1>住宿紀錄</h1>
+  <p class="subtitle">各次出差的飯店資訊與聯絡方式</p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏨</span> Radisson Hotel Colombo</div>
+    <div class="info-grid" style="margin-bottom:14px;">
+      <div class="info-item"><label>城市</label><span>可倫坡，斯里蘭卡</span></div>
+      <div class="info-item"><label>電話</label><span>+94 70 469 4222</span></div>
+      <div class="info-item"><label>入住 / 退房</label><span>06/11 14:30 → 06/13 12:00</span></div>
+      <div class="info-item"><label>房型</label><span>海景房 / 禁菸 / 特大床</span></div>
+      <div class="info-item"><label>費用</label><span>TWD 6,775（USD 204.48）</span></div>
+      <div class="info-item"><label>訂購平台</label><span>Agoda / Visa **5309</span></div>
+    </div>
+    <div class="alert" style="margin-bottom:0;">
+      SQ 468 06/11 23:35 才抵可倫坡，實際入住約 00:30（06/12）。<strong>需事先電告飯店，避免房間被釋出。</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏝️</span> Summer Beach Maldives</div>
+    <div class="info-grid" style="margin-bottom:14px;">
+      <div class="info-item"><label>城市</label><span>馬累，馬爾地夫</span></div>
+      <div class="info-item"><label>電話</label><span>+960 963 5550</span></div>
+      <div class="info-item"><label>地址</label><span>Boduthakurufaanu Magu, 006, Male City</span></div>
+      <div class="info-item"><label>入住 / 退房</label><span>06/13 → 06/15 12:00</span></div>
+      <div class="info-item"><label>房型</label><span>Deluxe Ocean View / 禁菸 / 大床</span></div>
+      <div class="info-item"><label>費用</label><span>TWD 5,283</span></div>
+      <div class="info-item"><label>訂單編號</label><span>#1729110868 / Agoda</span></div>
+      <div class="info-item"><label>會員號</label><span>271148629</span></div>
+    </div>
+    <div style="font-size:.85rem; color:var(--green);">
+      ✅ 免費機場接送（接機 + 送機）/ 免費早餐 / 飲用水 / 迎賓飲料 / 快速入住 / 餐飲 9 折
+    </div>
+  </div>
+</section>
+
+<!-- ========== 快查 ========== -->
+<section id="quickref" class="section">
+  <h1>快查</h1>
+  <p class="subtitle">出差常用資訊、時差、匯率、緊急聯絡</p>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🕐</span> 時差（相對台灣 UTC+8）</div>
+    <div class="ref-grid">
+      <div class="ref-card"><h4>🇸🇬 新加坡</h4><p>UTC+8 — <strong>無時差</strong></p></div>
+      <div class="ref-card"><h4>🇱🇰 斯里蘭卡</h4><p>UTC+5:30 — <strong>慢 2.5 小時</strong></p></div>
+      <div class="ref-card"><h4>🇲🇻 馬爾地夫</h4><p>UTC+5 — <strong>慢 3 小時</strong></p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💱</span> 匯率參考（2026/06 概估）</div>
+    <table>
+      <thead><tr><th>貨幣</th><th>1 TWD ≈</th><th>1 外幣 ≈ TWD</th></tr></thead>
+      <tbody>
+        <tr><td>🇸🇬 SGD 新加坡元</td><td>—</td><td>~23</td></tr>
+        <tr><td>🇱🇰 LKR 斯里蘭卡盧比</td><td>~10 LKR</td><td>~0.1</td></tr>
+        <tr><td>🇲🇻 MVR 馬爾地夫盧菲亞</td><td>~0.5 MVR</td><td>~2</td></tr>
+        <tr><td>🇺🇸 USD</td><td>—</td><td>~33</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.8rem; color:var(--muted); margin-top:8px;">以上為概估值，實際請查詢 Google 或銀行牌告匯率。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔗</span> 常用連結</div>
+    <div class="ref-grid">
+      <div class="ref-card"><h4>斯里蘭卡 ETA</h4><p><a href="https://www.eta.gov.lk" target="_blank">eta.gov.lk</a></p></div>
+      <div class="ref-card"><h4>馬爾地夫 IMUGA</h4><p><a href="https://imuga.immigration.gov.mv" target="_blank">imuga.immigration.gov.mv</a></p></div>
+      <div class="ref-card"><h4>中華航空管理訂位</h4><p><a href="https://www.china-airlines.com" target="_blank">china-airlines.com</a></p></div>
+      <div class="ref-card"><h4>新加坡航空管理訂位</h4><p><a href="https://www.singaporeair.com" target="_blank">singaporeair.com</a></p></div>
+      <div class="ref-card"><h4>易遊網訂單</h4><p><a href="https://www.eztravel.com.tw" target="_blank">eztravel.com.tw</a></p></div>
+      <div class="ref-card"><h4>外交部旅遊警示</h4><p><a href="https://www.boca.gov.tw/sp-trwn-list-1.html" target="_blank">boca.gov.tw</a></p></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  return false;
+}
+</script>
+</body>
+</html>
