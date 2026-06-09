@@ -109,6 +109,13 @@
   /* EMPTY STATE */
   .empty { color: var(--muted); font-size: .9rem; padding: 24px 0; text-align: center; }
 
+  /* PACKING LIST */
+  .pack-list { list-style: none; padding: 0; }
+  .pack-list li { padding: 6px 0; border-bottom: 1px solid var(--border);
+                  font-size: .875rem; display: flex; align-items: flex-start; gap: 8px; }
+  .pack-list li:last-child { border-bottom: none; }
+  .pack-list li::before { content: "□"; color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+
   @media (max-width: 600px) {
     nav { gap: 4px; }
     nav a { padding: 6px 8px; font-size: .8rem; }
@@ -125,6 +132,7 @@
   <a href="#" onclick="show('flights', this)">航班資訊</a>
   <a href="#" onclick="show('hotels', this)">住宿</a>
   <a href="#" onclick="show('quickref', this)">快查</a>
+  <a href="#" onclick="show('packing', this)">行李清單</a>
 </nav>
 
 <div class="container">
@@ -551,6 +559,95 @@
     </div>
   </div>
 </section>
+
+<!-- ========== 行李清單 ========== -->
+<section id="packing" class="section">
+  <h1>行李清單</h1>
+  <p class="subtitle">依此行程量身建議：可倫坡（正式會議）+ 馬累（熱帶海島）</p>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:16px;">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📄</span> 證件 & 財務</div>
+      <ul class="pack-list">
+        <li>護照（效期至少至 2026/12/16）</li>
+        <li>斯里蘭卡 ETA 確認信（列印 or 截圖）</li>
+        <li>馬爾地夫 IMUGA QR Code（截圖）</li>
+        <li>各航班電子機票 / 訂位代號截圖</li>
+        <li>Kangaroo Cabs 訂單確認</li>
+        <li>Summer Beach Maldives 訂房確認</li>
+        <li>Radisson Colombo 訂房確認</li>
+        <li>信用卡（Visa **5309）</li>
+        <li>備用現金（USD / LKR / MVR）</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">👔</span> 衣物（可倫坡正式場合）</div>
+      <ul class="pack-list">
+        <li>正式上衣（國會參訪必備）</li>
+        <li>西褲 / 長褲（不可穿短褲進國會）</li>
+        <li>正式皮鞋或包頭鞋</li>
+        <li>工作坊用商務休閒服 × 1–2套</li>
+        <li>輕薄外套（機艙 / 冷氣房用）</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🩴</span> 衣物（馬累海島）</div>
+      <ul class="pack-list">
+        <li>輕便休閒服 × 2–3套</li>
+        <li>泳褲 / 泳衣</li>
+        <li>拖鞋 / 涼鞋</li>
+        <li>防曬外套或薄長袖（清真文化區注意）</li>
+        <li>帽子</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🔌</span> 3C & 電源</div>
+      <ul class="pack-list">
+        <li>手機充電線 + 充電頭</li>
+        <li>行動電源（隨身，不可託運超過 100Wh）</li>
+        <li>萬用轉接頭（斯里蘭卡用英式三腳 Type G）</li>
+        <li>相機 / 記憶卡</li>
+        <li>耳機（紅眼班必備）</li>
+        <li>筆電 / 平板（視工作需求）</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧴</span> 盥洗 & 個人衛生</div>
+      <ul class="pack-list">
+        <li>防曬乳 SPF50+（熱帶強烈日曬）</li>
+        <li>防蚊液（斯里蘭卡登革熱風險）</li>
+        <li>個人藥品（腸胃藥、止痛藥、感冒藥）</li>
+        <li>牙刷 / 牙膏</li>
+        <li>小剪刀（託運行李）</li>
+        <li>濕紙巾 / 乾洗手</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🎒</span> 其他雜項</div>
+      <ul class="pack-list">
+        <li>小禮品（國會拜會用，避免金屬製品）</li>
+        <li>名片</li>
+        <li>環保袋（購物 / 海灘用）</li>
+        <li>雨傘或輕便雨衣（斯里蘭卡午後雷陣雨）</li>
+        <li>行李鎖</li>
+        <li>空白筆記本 + 筆</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="alert" style="margin-top:8px;">
+    <strong>⚠ 行李重量提醒</strong>
+    SQ 468 去程 25 kg、SQ 437 回程 30 kg；CI / GF 段請另行確認官網。行動電源只可隨身攜帶。
+  </div>
+</section>
+<!-- /行李清單 -->
 
 </div><!-- /container -->
 
